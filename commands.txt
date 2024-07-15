@@ -5,3 +5,16 @@ npm i -D eslint eslint-config-react-app
 npm i -D @types/node
 npm i recharts
 npm i --save-dev @types/regression
+
+
+server:
+npm init -y
+npm i express body-parser cors dotenv helmet morgan
+npm i -D nodemon
+npm install sequelize sequelize-cli pg pg-hstore
+
+npx sequelize-cli migration:generate --name create-day
+npx sequelize-cli migration:generate --name create-month
+npx sequelize-cli migration:generate --name create-kpi
+npx sequelize-cli migration:generate --name create-product
+npx sequelize-cli migration:generate --name create-transaction
