@@ -1,26 +1,31 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
-  const Product = sequelize.define('Product', {
+import mongoose from "mongoose";
+import { loadType } from "mongoose-currency";
+
+const Schema = mongoose.Schema;
+loadType(mongoose);
+
+const ProductSchema = new Schema(
+  {
     price: {
-      type: DataTypes.INTEGER,
-      get() {
-        return this.getDataValue('price') / 100;
-      },
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
     },
     expense: {
-      type: DataTypes.INTEGER,
-      get() {
-        return this.getDataValue('expense') / 100;
-      },
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
     },
-  }, {
-    toJSON: { getters: true },
-    timestamps: false, // Disable timestamps
-  });
+    transactions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Transaction",
+      },
+    ],
+  },
+  { timestamps: true, toJSON: { getters: true } }
+);
 
-  Product.associate = function(models) {
-    Product.hasMany(models.Transaction, { as: 'transactions' });
-  };
+const Product = mongoose.model("Product", ProductSchema);
 
-  return Product;
-};
+export default Product;

@@ -11,8 +11,12 @@ server:
 npm init -y
 npm i express body-parser cors dotenv helmet morgan
 npm i -D nodemon
-npm install sequelize sequelize-cli pg pg-hstore
 
+//mongo db
+npm install mongodb mongoose mongoose-currency
+
+// postgres
+npm install sequelize sequelize-cli pg pg-hstore
 npx sequelize-cli migration:generate --name create-day
 npx sequelize-cli migration:generate --name create-month
 npx sequelize-cli migration:generate --name create-kpi

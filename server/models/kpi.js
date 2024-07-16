@@ -1,43 +1,84 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
-  const KPI = sequelize.define('KPI', {
+import mongoose from "mongoose";
+import { loadType } from "mongoose-currency";
+
+const Schema = mongoose.Schema;
+loadType(mongoose);
+
+const daySchema = new Schema(
+  {
+    date: String,
+    revenue: {
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
+    },
+    expenses: {
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
+    },
+  },
+  { toJSON: { getters: true } }
+);
+
+const monthSchema = new Schema(
+  {
+    month: String,
+    revenue: {
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
+    },
+    expenses: {
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
+    },
+    operationalExpenses: {
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
+    },
+    nonOperationalExpenses: {
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
+    },
+  },
+  { toJSON: { getters: true } }
+);
+
+const KPISchema = new Schema(
+  {
     totalProfit: {
-      type: DataTypes.INTEGER,
-      get() {
-        return this.getDataValue('totalProfit') / 100;
-      },
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
     },
     totalRevenue: {
-      type: DataTypes.INTEGER,
-      get() {
-        return this.getDataValue('totalRevenue') / 100;
-      },
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
     },
     totalExpenses: {
-      type: DataTypes.INTEGER,
-      get() {
-        return this.getDataValue('totalExpenses') / 100;
-      },
+      type: mongoose.Types.Currency,
+      currency: "USD",
+      get: (v) => v / 100,
     },
     expensesByCategory: {
-      type: DataTypes.JSONB,
-      get() {
-        const expenses = this.getDataValue('expensesByCategory');
-        for (const category in expenses) {
-          expenses[category] = expenses[category] / 100;
-        }
-        return expenses;
+      type: Map,
+      of: {
+        type: mongoose.Types.Currency,
+        currency: "USD",
+        get: (v) => v / 100,
       },
     },
-  }, {
-    toJSON: { getters: true },
-    timestamps: false, // Disable timestamps
-  });
+    monthlyData: [monthSchema],
+    dailyData: [daySchema],
+  },
+  { timestamps: true, toJSON: { getters: true } }
+);
 
-  KPI.associate = function(models) {
-    KPI.hasMany(models.Month, { as: 'monthlyData' });
-    KPI.hasMany(models.Day, { as: 'dailyData' });
-  };
+const KPI = mongoose.model("KPI", KPISchema);
 
-  return KPI;
-};
+export default KPI;
